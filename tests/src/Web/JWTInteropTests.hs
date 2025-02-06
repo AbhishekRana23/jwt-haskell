@@ -38,6 +38,7 @@ import           Test.Tasty
 import           Test.Tasty.QuickCheck
 import           Test.Tasty.TH
 import           Web.JWT
+import qualified Data.Aeson.Key as AK
 
 defaultTestGroup :: TestTree
 defaultTestGroup = $(testGroupGenerator)
@@ -56,7 +57,7 @@ prop_encode_decode_iss = shouldBeMaybeStringOrUri "iss" iss
 
 shouldBeMaybeStringOrUri :: ToJSON a => T.Text -> (a -> Maybe StringOrURI) -> a -> Bool
 shouldBeMaybeStringOrUri key' f claims' = 
-    let json = toJSON claims' ^? key key'
+    let json = toJSON claims' ^? key (AK.fromText key')
     in json == (fmap (String . stringOrURIToText) $ f claims')
 
 prop_encode_decode_aud :: JWTClaimsSet -> Bool
